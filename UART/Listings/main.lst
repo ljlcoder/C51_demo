@@ -1,0 +1,70 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              10/30/2024 10:12:01 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: H:\C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst
+                    -) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <stdio.h>
+   3          sbit led=P2^7;
+   4          
+   5          char putchar(char dat){
+   6   1              //????????
+   7   1              SBUF = dat;     //?????????
+   8   1              while(!TI);    //??????,TI??????? ?1
+   9   1              TI = 0;      //????????
+  10   1              return dat;  //?????????printf
+  11   1      }
+  12          //???????
+  13          void UartInit()                //9600bps@11.0592MHz
+  14          {
+  15   1            SCON = 0x50;            //0101 0000 ??????1 ????
+  16   1            TMOD &= 0x0F;           //??TMOD????1??
+  17   1            TMOD |= 0X20;           //?????1????2:8?????
+  18   1            TH1 = 0xFD;             //??????
+  19   1            TL1 = 0XFD;
+  20   1            TR1 = 1;                //?????1
+  21   1            ES= 1;
+  22   1            EA= 1;
+  23   1            printf("done");
+  24   1      }
+  25           
+  26          void main()
+  27          {
+  28   1          char receive;//???????????
+  29   1          UartInit();
+  30   1          while(1)
+  31   1          {
+  32   2              if(RI==1)  //RI=1??????????
+  33   2              {
+  34   3                 RI=0;   //RI?0??????
+  35   3                 receive=SBUF;//????????????????
+  36   3                 //???????,???????
+  37   3                 if(receive=='O')
+  38   3                     led=0;
+  39   3                 else if(receive=='C')
+  40   3                     led=1;        
+  41   3              }
+  42   2          }
+  43   1      }
+  44           
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     67    ----
+   CONSTANT SIZE    =      5    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+C51 COMPILER V9.60.0.0   MAIN                                                              10/30/2024 10:12:01 PAGE 2   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

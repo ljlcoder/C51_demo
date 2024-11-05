@@ -1,0 +1,287 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              11/05/2024 16:38:43 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: H:\C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst
+                    -) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #include <stdio.h> 
+   3          
+   4          sbit sda = P0^1;
+   5          sbit scl = P0^2;
+   6          
+   7          #define GXHT3L_ADDR_WRITE 0x44<<1    //0b0100 0100 -> 0b1000 1000
+   8          #define GXHT3L_ADDR_READ  (0x44<<1)+1//0b0100 0100 -> 0b1000 1001
+   9          
+  10          void Delay10us()                //@11.0592MHz
+  11          {
+  12   1              unsigned char i;
+  13   1              i = 2;
+  14   1              while (--i);
+  15   1      }
+  16          
+  17          void i2c_start()
+  18          {
+  19   1              scl = 1;
+  20   1              sda = 1;
+  21   1              Delay10us();
+  22   1              sda = 0;
+  23   1      }
+  24          
+  25          void i2c_stop()
+  26          {
+  27   1              scl = 1;
+  28   1              sda = 0;
+  29   1              Delay10us();
+  30   1              sda = 1;
+  31   1      }
+  32          
+  33          void i2c_write_bit(unsigned char databit)
+  34          {
+  35   1              scl = 0;
+  36   1              if(databit == 1)
+  37   1                      sda = 1;
+  38   1              else
+  39   1                      sda = 0;
+  40   1              Delay10us();
+  41   1              scl = 1;
+  42   1              Delay10us();
+  43   1      }
+  44          
+  45          void i2c_write_byte(unsigned char datasend)
+  46          {
+  47   1              int i = 0;
+  48   1              for(i = 0;i< 8;i++){
+  49   2                      if(datasend & 0x80){
+  50   3                              i2c_write_bit(1);
+  51   3                      }else{
+  52   3                              i2c_write_bit(0);
+  53   3                      }
+  54   2                      datasend = datasend << 1;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/05/2024 16:38:43 PAGE 2   
+
+  55   2              }
+  56   1      }
+  57          
+  58          unsigned char i2c_read_bit()
+  59          {
+  60   1              unsigned char databit = 0;
+  61   1              scl = 0;
+  62   1              Delay10us();
+  63   1              scl = 1;
+  64   1              Delay10us();
+  65   1              if(sda == 1)
+  66   1                      databit =  1;
+  67   1              else
+  68   1                      databit = 0;
+  69   1              return databit;
+  70   1      }
+  71          
+  72          unsigned char i2c_read_byte()
+  73          {
+  74   1              unsigned char value = 0;
+  75   1              unsigned char i = 0;
+  76   1              sda = 1; //?????????
+  77   1              for(i = 0;i < 8;i++){
+  78   2                      if(i2c_read_bit() == 1){
+  79   3                              value = value | 0x01;
+  80   3                      }else{
+  81   3                              value = value | 0x00;
+  82   3                      }
+  83   2                      if(i<7)
+  84   2                              value = value << 1;
+  85   2              }
+  86   1              scl = 0;
+  87   1              Delay10us();
+  88   1              return value;
+  89   1      }
+  90          
+  91          void i2c_ack()
+  92          {
+  93   1              scl = 0;
+  94   1              sda = 0;
+  95   1              Delay10us();
+  96   1              scl = 1;
+  97   1              Delay10us();
+  98   1              scl = 0;
+  99   1      }
+ 100          
+ 101          void i2c_nack()
+ 102          {
+ 103   1        scl = 0;
+ 104   1        sda = 1;     //SDA??,???????
+ 105   1        Delay10us();
+ 106   1        scl = 1;
+ 107   1        Delay10us(); 
+ 108   1        scl = 0;
+ 109   1      }
+ 110          
+ 111          void i2c_wait_ack()
+ 112          {
+ 113   1              unsigned char time = 0;
+ 114   1              scl = 0;
+ 115   1              sda = 1;
+ 116   1              Delay10us();
+C51 COMPILER V9.60.0.0   MAIN                                                              11/05/2024 16:38:43 PAGE 3   
+
+ 117   1              scl = 1;
+ 118   1              Delay10us();
+ 119   1              while(sda){
+ 120   2                      Delay10us();
+ 121   2                      time ++;
+ 122   2                      if(time > 100)
+ 123   2                              break;
+ 124   2              }
+ 125   1              scl = 0;
+ 126   1              Delay10us();
+ 127   1      }
+ 128          
+ 129          void gxht30_init()
+ 130          {
+ 131   1              i2c_start();
+ 132   1              i2c_write_byte(GXHT3L_ADDR_WRITE);
+ 133   1              i2c_wait_ack();
+ 134   1              i2c_write_byte(0x22);
+ 135   1              i2c_wait_ack();
+ 136   1              i2c_write_byte(0x20);
+ 137   1              i2c_wait_ack();
+ 138   1                                      i2c_stop();
+ 139   1      }
+ 140          
+ 141          void gxht30_read_mode()
+ 142          {
+ 143   1              i2c_start();
+ 144   1              i2c_write_byte(GXHT3L_ADDR_WRITE);
+ 145   1              i2c_wait_ack();
+ 146   1              i2c_write_byte(0xE0);
+ 147   1              i2c_wait_ack();
+ 148   1              i2c_write_byte(0x00);
+ 149   1              i2c_wait_ack();
+ 150   1                                      i2c_stop();
+ 151   1                                      Delay10us();
+ 152   1      }
+ 153          
+ 154          #define POLYNOMIAL  0x31   // P(x) = x^8 + x^5 + x^4 + 1 = 00110001
+ 155           
+ 156          //CRC????
+ 157          unsigned char gxht30_crc8(unsigned char *crcdata, unsigned char nbrOfBytes)
+ 158          {
+ 159   1        unsigned char Bit;        // bit mask
+ 160   1        unsigned char crc = 0xFF; // calculated checksum
+ 161   1        unsigned char byteCtr;    // byte counter
+ 162   1        for(byteCtr = 0; byteCtr < nbrOfBytes; byteCtr++)
+ 163   1        {
+ 164   2          crc ^= (crcdata[byteCtr]);
+ 165   2          for(Bit = 8; Bit > 0; --Bit)
+ 166   2          {
+ 167   3            if(crc & 0x80) crc = (crc << 1) ^ POLYNOMIAL;
+ 168   3            else           crc = (crc << 1);
+ 169   3          }
+ 170   2        }
+ 171   1        return crc;
+ 172   1      }
+ 173          
+ 174          void gxht30_read_data()
+ 175          {
+ 176   1              unsigned short tem,hum;
+ 177   1              int index = 0;
+ 178   1              float temperature,humidity;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/05/2024 16:38:43 PAGE 4   
+
+ 179   1              unsigned char buffer[6];
+ 180   1              i2c_start();
+ 181   1              i2c_write_byte(GXHT3L_ADDR_READ);
+ 182   1              i2c_wait_ack();
+ 183   1              for(index = 0; index < 6;index ++){
+ 184   2                      buffer[index] = i2c_read_byte();
+ 185   2                      if(index == 5)
+ 186   2                              i2c_nack();
+ 187   2                      else
+ 188   2                              i2c_ack();
+ 189   2              }
+ 190   1              i2c_stop();
+ 191   1                                      if(gxht30_crc8(buffer,2) != buffer[2]){
+ 192   2                                              printf("crc error\n");
+ 193   2                                              return;
+ 194   2                                      }
+ 195   1                                      if(gxht30_crc8(&buffer[3],2) != buffer[5]){
+ 196   2                                              printf("crc error\n");
+ 197   2                                              return;
+ 198   2                                      }
+ 199   1              //????8bit??????16bit???
+ 200   1              tem = (buffer[0] << 8) | buffer[1];
+ 201   1              hum = (buffer[3] << 8) | buffer[4];
+ 202   1              //???????
+ 203   1              temperature = (175.0*(float)tem/65535.0-45.0) ;// T = -45 + 175 * tem / (2^16-1)
+ 204   1                                      humidity = (100.0*(float)hum/65535.0);// RH = hum*100 / (2^16-1) 
+ 205   1              printf("temperature=%f humidity=%f\n",temperature,humidity);
+ 206   1      }
+ 207          
+ 208          
+ 209          void uart_init(void)                //9600bps@11.0592MHz
+ 210          {
+ 211   1              PCON &= 0x7F;                //??????
+ 212   1              SCON = 0x50;                //8???,?????
+ 213   1              TMOD &= 0x0F;                //?????1???
+ 214   1              TMOD |= 0x20;                //?????1?8???????
+ 215   1              TL1 = 0xFD;                //??????
+ 216   1              TH1 = 0xFD;                //????????
+ 217   1              ET1 = 0;                //?????1??
+ 218   1              TR1 = 1;                //?????1
+ 219   1      }
+ 220          
+ 221          /*
+ 222          **??printf???putchar??,????????
+ 223          **???????<stdio.h>
+ 224          *****/
+ 225          char putchar(char dat){
+ 226   1              //????????
+ 227   1              SBUF = dat;     //?????????
+ 228   1              while(!TI);    //??????,TI??????? ?1
+ 229   1              TI = 0;      //????????
+ 230   1              return dat;  //?????????printf
+ 231   1      }
+ 232          
+ 233          //??????
+ 234          void delay_ms(unsigned int xms)   //@12MHz
+ 235          {
+ 236   1          unsigned int i, j;
+ 237   1          for(i=xms;i>0;i--)
+ 238   1          {
+ 239   2              for(j=124;j>0;j--)
+ 240   2              {}
+C51 COMPILER V9.60.0.0   MAIN                                                              11/05/2024 16:38:43 PAGE 5   
+
+ 241   2          }
+ 242   1      }
+ 243          
+ 244          void main()
+ 245          {
+ 246   1              uart_init();
+ 247   1              gxht30_init();
+ 248   1              while(1)
+ 249   1              {
+ 250   2                                                                      delay_ms(1000);
+ 251   2                      gxht30_read_mode();
+ 252   2                      gxht30_read_data();
+ 253   2                      
+ 254   2              }
+ 255   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    638    ----
+   CONSTANT SIZE    =     39    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      21
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,172 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    10/29/2024  10:42:34  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+H:\C51\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj TO .\Objects\demo PRINT (.\Listings\demo.m51) RAMSIZE 
+>> (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\main.obj (MAIN)
+
+
+LINK MAP OF MODULE:  .\Objects\demo (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0003H     ABSOLUTE     
+            CODE    0006H     001EH     UNIT         ?PR?_DELAY_MS?MAIN
+            CODE    0024H     000CH     UNIT         ?C_C51STARTUP
+            CODE    0030H     0001H     UNIT         ?PR?EXIT0?MAIN
+                    0031H     0002H                  *** GAP ***
+            CODE    0033H     0003H     ABSOLUTE     
+            CODE    0036H     001AH     UNIT         ?PR?MAIN?MAIN
+            CODE    0050H     0006H     UNIT         ?PR?EXIT2?MAIN
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\demo (?C_STARTUP)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN
+  +--> ?PR?_DELAY_MS?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\demo (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0024H         SEGMENT       ?C_C51STARTUP
+  I:0008H         SEGMENT       ?STACK
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/29/2024  10:42:34  PAGE 2
+
+
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0027H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0024H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0024H         LINE#         133
+  C:0026H         LINE#         134
+  C:0027H         LINE#         135
+  C:0028H         LINE#         136
+  C:002AH         LINE#         185
+  C:002DH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00C0H         PUBLIC        XICON
+  D:00B0H         PUBLIC        P3
+  D:00E8H         PUBLIC        P4
+  B:00A8H.7       PUBLIC        EA
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0036H         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  B:00A8H.0       PUBLIC        EX0
+  B:0088H.0       PUBLIC        IT0
+  B:00C0H.0       PUBLIC        IT2
+  B:00C0H.2       PUBLIC        EX2
+  C:0006H         PUBLIC        _delay_ms
+  B:00B8H.0       PUBLIC        PX0
+  B:00C0H.3       PUBLIC        PX2
+  D:0087H         PUBLIC        IPH
+  B:00A0H.7       PUBLIC        led1
+  D:00C8H         PUBLIC        T2CON
+  C:0030H         PUBLIC        exit0
+  C:0050H         PUBLIC        exit2
+  D:00D0H         PUBLIC        PSW
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  10/29/2024  10:42:34  PAGE 3
+
+
+  B:00E8H.3       PUBLIC        key1
+  -------         PROC          _DELAY_MS
+  D:0006H         SYMBOL        xms
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:0006H         LINE#         20
+  C:0006H         LINE#         21
+  C:0006H         LINE#         23
+  C:000FH         LINE#         24
+  C:000FH         LINE#         25
+  C:0013H         LINE#         26
+  C:001CH         LINE#         27
+  C:0023H         LINE#         28
+  -------         ENDPROC       _DELAY_MS
+  -------         PROC          EXIT0
+  C:0030H         LINE#         29
+  C:0030H         LINE#         30
+  -------         ENDPROC       EXIT0
+  -------         PROC          EXIT2
+  C:0050H         LINE#         31
+  C:0050H         LINE#         34
+  C:0053H         LINE#         35
+  C:0053H         LINE#         36
+  C:0055H         LINE#         38
+  C:0055H         LINE#         39
+  -------         ENDPROC       EXIT2
+  -------         PROC          MAIN
+  C:0036H         LINE#         41
+  C:0036H         LINE#         42
+  C:0036H         LINE#         43
+  C:0038H         LINE#         44
+  C:003AH         LINE#         46
+  C:003CH         LINE#         47
+  C:003EH         LINE#         49
+  C:0041H         LINE#         51
+  C:0043H         LINE#         54
+  C:0045H         LINE#         56
+  C:0047H         LINE#         58
+  C:0047H         LINE#         59
+  C:0047H         LINE#         60
+  C:004EH         LINE#         61
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+Program Size: data=9.0 xdata=0 code=84
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

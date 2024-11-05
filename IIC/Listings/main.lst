@@ -1,0 +1,104 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              11/01/2024 17:17:58 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: H:\C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst
+                    -) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include<reg52.h>
+   2          
+   3          sbit sda=P0^1;
+   4          sbit scl=P0^2;
+   5          void delay10us()                //@11.0592MHz
+   6          {
+   7   1          unsigned char i;
+   8   1          i = 2;
+   9   1          while (--i);
+  10   1      }
+  11          void iic_start(){
+  12   1        scl=1;
+  13   1        sda=1;
+  14   1        delay10us();
+  15   1        sda=0;
+  16   1      }
+  17          void iic_end()
+  18          {
+  19   1        scl=1;
+  20   1        sda=0;
+  21   1        delay10us();
+  22   1        sda=1;
+  23   1      }
+  24          void iic_write_bit(unsigned char databit)
+  25          {
+  26   1        if(databit==1){
+  27   2          sda=1;
+  28   2        }
+  29   1        else 
+  30   1          sda=0;
+  31   1        scl=0;
+  32   1        delay10us();
+  33   1        scl=1;
+  34   1        delay10us();
+  35   1      }
+  36          void iic_write_byte(unsigned char datasend){
+  37   1        int i=0;
+  38   1        for(i=0;i<0;i++){
+  39   2          if(datasend & 0x80){
+  40   3            iic_write_bit(1);
+  41   3          }else{
+  42   3            iic_write_bit(0);
+  43   3          }
+  44   2          datasend<=1;
+*** WARNING C275 IN LINE 44 OF main.c: expression with possibly no effect
+  45   2        }
+  46   1      }
+  47          unsigned char iic_read_bit()
+  48          {
+  49   1        unsigned char datatbit=0;
+  50   1        scl=0;
+  51   1        delay10us();
+  52   1        scl=1;
+  53   1        delay10us();
+C51 COMPILER V9.60.0.0   MAIN                                                              11/01/2024 17:17:58 PAGE 2   
+
+  54   1        if(sda==1)
+  55   1          databit=1;
+*** ERROR C202 IN LINE 55 OF main.c: 'databit': undefined identifier
+  56   1        else 
+  57   1          databit=0;
+*** ERROR C202 IN LINE 57 OF main.c: 'databit': undefined identifier
+  58   1        return databit;
+*** ERROR C202 IN LINE 58 OF main.c: 'databit': undefined identifier
+  59   1      } 
+  60          unsigned char iic_read_byte()
+  61          {
+  62   1        unsigned char value=0;
+  63   1        sda=0;
+  64   1        int i=0;
+*** ERROR C141 IN LINE 64 OF main.c: syntax error near 'int', expected '__asm'
+*** ERROR C202 IN LINE 64 OF main.c: 'i': undefined identifier
+  65   1        for(i=0;i<8;i++){
+*** ERROR C202 IN LINE 65 OF main.c: 'i': undefined identifier
+  66   2          if(iic_read_bit()==1){
+  67   3            value|=0x01;
+  68   3          }else{
+  69   3            value|=0x00;
+  70   3          }
+  71   2          if(i<7)
+*** ERROR C202 IN LINE 71 OF main.c: 'i': undefined identifier
+  72   2            value<<=1;
+  73   2        }
+  74   1        scl=0;
+  75   1        delay10us();
+  76   1        return value;
+  77   1      }
+  78          void main()
+  79          {
+  80   1        iic_start();
+  81   1        iic_end();
+  82   1      }
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  7 ERROR(S)

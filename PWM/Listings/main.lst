@@ -1,0 +1,59 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              10/30/2024 10:29:03 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: H:\C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main.lst
+                    -) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          
+   3          sbit led = P2^7;
+   4          
+   5          void Delayus(int t)                //@11.0592MHz
+   6          {
+   7   1              while(t--){
+   8   2                      unsigned char i;
+   9   2                      i = 2;
+  10   2                      while (--i);
+  11   2              }
+  12   1      }
+  13          
+  14          
+  15          void main()
+  16          {
+  17   1              int time = 0;
+  18   1              led = 0;
+  19   1              while(1)
+  20   1        {
+  21   2                      for(time = 0;time < 300;time ++){ //?????????
+  22   3                              led = 0;
+  23   3                              Delayus(300-time);
+  24   3                              led = 1;
+  25   3                              Delayus(time);
+  26   3                      }
+  27   2                      for(time = 0;time < 300;time ++){ //?????????
+  28   3                              led = 1;
+  29   3                              Delayus(300-time);
+  30   3                              led = 0;
+  31   3                              Delayus(time);
+  32   3                      }
+  33   2        }
+  34   1      }
+  35          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     96    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
